@@ -12,20 +12,19 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
-import Navbar from "@/components/sidebar"; // Assuming Navbar is your sidebar component
+import Navbar from "@/components/sidebar";
 
 const DataBarang = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); // Number of items per page
+  const [itemsPerPage] = useState(5);
 
-  // Dummy data for demonstration
   const dummyData = useMemo(
     () =>
       Array.from({ length: 20 }, (_, i) => ({
         no: i + 1,
         id: `ID${i + 1}`,
-        gambar: "product.png", // Placeholder for image
+        gambar: "product.png",
         namaBarang: `Barang ${i + 1}`,
         hargaBarang: (i + 1) * 10000,
         stok: Math.floor(Math.random() * 100) + 1,
@@ -37,7 +36,6 @@ const DataBarang = () => {
     []
   );
 
-  // Filter data based on search query
   const filteredData = useMemo(() => {
     if (!searchQuery) {
       return dummyData;
@@ -49,7 +47,6 @@ const DataBarang = () => {
     );
   }, [dummyData, searchQuery]);
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -58,7 +55,6 @@ const DataBarang = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Pagination buttons
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
@@ -66,9 +62,8 @@ const DataBarang = () => {
 
   return (
     <div className="flex min-h-screen font-sans">
-      {/* Sidebar */}
-      <Navbar /> {/* Assuming Navbar is your sidebar component */}
-      {/* Main Content */}
+      <Navbar />
+
       <main className="flex-1 bg-[#fefbff] p-6">
         {/* Header and Controls */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
@@ -91,7 +86,7 @@ const DataBarang = () => {
                 <FiSearch />
               </button>
             </div>
-            {/* Tombol Tambah Barang */}
+
             <Link href="/input-barang">
               <button className="flex items-center bg-pink-300 hover:bg-pink-200 text-white px-3 py-2 rounded-md">
                 <FaPlusSquare className="mr-2" />
@@ -142,7 +137,6 @@ const DataBarang = () => {
                       {item.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {/* Placeholder for image */}
                       <img
                         src={item.gambar}
                         alt="Product"
@@ -186,7 +180,6 @@ const DataBarang = () => {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="mt-6 flex justify-end">
           <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"

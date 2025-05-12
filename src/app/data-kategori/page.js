@@ -12,14 +12,14 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
-import Navbar from "@/components/sidebar"; // Assuming Navbar is your sidebar component
+import Navbar from "@/components/sidebar"; 
 
 const DataKategori = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); // Number of items per page
+  const [itemsPerPage] = useState(5); 
 
-  // Dummy data for demonstration
+ 
   const dummyData = useMemo(
     () =>
       Array.from({ length: 15 }, (_, i) => ({
@@ -32,7 +32,7 @@ const DataKategori = () => {
     []
   );
 
-  // Filter data based on search query
+  
   const filteredData = useMemo(() => {
     if (!searchQuery) {
       return dummyData;
@@ -44,7 +44,7 @@ const DataKategori = () => {
     );
   }, [dummyData, searchQuery]);
 
-  // Pagination logic
+  
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -53,7 +53,7 @@ const DataKategori = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Pagination buttons
+  
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
@@ -61,11 +61,11 @@ const DataKategori = () => {
 
   return (
     <div className="flex min-h-screen font-sans">
-      {/* Sidebar */}
-      <Navbar /> {/* Assuming Navbar is your sidebar component */}
-      {/* Main Content */}
+     
+      <Navbar /> 
+     
       <main className="flex-1 bg-[#fefbff] p-6">
-        {/* Header and Controls */}
+      
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
           <div>
             <h1 className="text-2xl font-semibold flex items-center space-x-2">
@@ -86,7 +86,7 @@ const DataKategori = () => {
                 <FiSearch />
               </button>
             </div>
-            {/* Tombol Tambah Kategori */}
+         
             <Link href="/input-kategori">
               <button className="flex items-center bg-pink-300 hover:bg-pink-200 text-white px-3 py-2 rounded-md">
                 <FaPlusSquare className="mr-2" />
@@ -192,7 +192,7 @@ const DataKategori = () => {
   );
 };
 
-// Sidebar Item Component (Keep this as is)
+
 const MenuItem = ({ icon, label, collapsed }) => (
   <div className="flex items-center space-x-4 text-white hover:text-pink-200 cursor-pointer">
     <span className="text-lg">{icon}</span>
@@ -200,4 +200,4 @@ const MenuItem = ({ icon, label, collapsed }) => (
   </div>
 );
 
-export default DataKategori; // Renamed from DataBarang
+export default DataKategori; 

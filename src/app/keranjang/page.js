@@ -1,10 +1,8 @@
-// app/keranjang/page.tsx
 "use client";
 
 import React from "react";
 
 export default function KeranjangPage() {
-  // Simulasi data keranjang
   const items = [
     { id: 1, nama: "Baju Hitam", jumlah: 2, harga: 120000 },
     { id: 2, nama: "Celana Jeans", jumlah: 1, harga: 180000 },
@@ -14,7 +12,9 @@ export default function KeranjangPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Keranjang Belanja</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black text-center">
+        Keranjang Belanja
+      </h1>
       <div className="space-y-4">
         {items.map((item) => (
           <div

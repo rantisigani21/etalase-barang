@@ -12,7 +12,7 @@ export default function Home() {
       <Header />
 
       <main className="min-h-screen max-w-7xl mx-auto px-6 py-12 bg-[url('/images/background-HD.jpg')] bg-cover bg-center bg-no-repeat">
-        {/* Hero Section */}
+   
         <section className="text-center mb-16  p-10 rounded-2xl  mt-14">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-800">
             Selamat Datang di Etalase Barang

@@ -37,10 +37,10 @@ export default function HalamanFavorit() {
           </button>
         </Link>
         <h1 className="text-3xl font-bold text-gray-800">Barang Favorit</h1>
-        <div></div> {/* Spacer */}
+        <div></div> 
       </div>
 
-      {/* Konten Favorit */}
+   
       {favorites.length === 0 ? (
         <p className="text-center text-gray-600">Tidak ada barang favorit.</p>
       ) : (

@@ -50,7 +50,7 @@ const dummyProducts = [
   },
 ];
 
-const categories = ["Semua", "Kaos", "Sepatu", "Tas"];
+const categories = ["Semua", "electronic", "clothes", "food"];
 
 export default function HalamanUser() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -164,7 +164,7 @@ export default function HalamanUser() {
           className="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-300 transition"
           onClick={() => window.history.back()}
         >
-           Kembali
+          Kembali
         </button>
       </div>
     </div>

@@ -51,7 +51,7 @@ export default function UserHomePage() {
           </div>
         </section>
 
-        {/* Barang Terbaru */}
+      
         <section className="bg-white bg-opacity-80 p-8 rounded-2xl shadow-lg mt-10">
           <h2 className="text-3xl font-semibold mb-8 text-gray-800 text-center">
             Barang Terbaru
