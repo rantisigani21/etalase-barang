@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Head from "next/head";
-import Header from "@/components/Header"; // ✅ Pastikan Header adalah default export
-import ItemCard from "@/components/ItemCard"; // ✅ Pastikan ItemCard adalah default export
+import Header from "@/components/Header";
+import ItemCard from "@/components/ItemCard";
 import {
   FaBoxOpen,
   FaClipboardList,
@@ -37,11 +39,7 @@ export default function UserHomePage() {
                 <FaHeart /> Favorit
               </button>
             </Link>
-            <Link href="/riwayat">
-              <button className="bg-pink-500 text-white px-6 py-2 rounded-xl hover:bg-pink-400 flex items-center gap-2 shadow">
-                <FaClipboardList /> Riwayat
-              </button>
-            </Link>
+           
 
             <Link href="/user">
               <button className="bg-pink-500 text-white px-6 py-2 rounded-xl hover:bg-pink-400 flex items-center gap-2 shadow">
@@ -51,7 +49,6 @@ export default function UserHomePage() {
           </div>
         </section>
 
-      
         <section className="bg-white bg-opacity-80 p-8 rounded-2xl shadow-lg mt-10">
           <h2 className="text-3xl font-semibold mb-8 text-gray-800 text-center">
             Barang Terbaru

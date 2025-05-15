@@ -1,75 +1,62 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { FiShoppingCart } from "react-icons/fi";
-import { useState } from "react";
 import ProductCard from "@/components/productcard";
+import AddFavoriteButton from "@/components/AddFavoriteButton";
 
-const dummyProducts = [
-  {
-    id: 1,
-    name: "Kaos Polos",
-    price: "Rp50.000",
-    image: "/kaos.jpg",
-    category: "Kaos",
-  },
-  {
-    id: 2,
-    name: "Sepatu Sneakers",
-    price: "Rp200.000",
-    image: "/sepatu.jpg",
-    category: "Sepatu",
-  },
-  {
-    id: 3,
-    name: "Tas Kulit",
-    price: "Rp350.000",
-    image: "/tas.jpg",
-    category: "Tas",
-  },
-  {
-    id: 4,
-    name: "Kaos Distro",
-    price: "Rp100.000",
-    image: "/kaos2.jpg",
-    category: "Kaos",
-  },
-  {
-    id: 5,
-    name: "Sepatu Lari",
-    price: "Rp250.000",
-    image: "/sepatu2.jpg",
-    category: "Sepatu",
-  },
-  {
-    id: 6,
-    name: "Tas Ransel",
-    price: "Rp150.000",
-    image: "/tas2.jpg",
-    category: "Tas",
-  },
-];
-
-const categories = ["Semua", "electronic", "clothes", "food"];
+const categories = ["Semua", "Kaos", "Sepatu", "Tas"];
 
 export default function HalamanUser() {
+  const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
   const [cartCount, setCartCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const itemsPerPage = 6;
+  const id_user = 1; 
 
-  const filteredProducts = dummyProducts.filter((product) => {
-    const matchesSearchQuery = product.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  // Ambil data dari API
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/barang");
+        // Pastikan responsnya adalah array sebelum mengatur state
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          console.error("Respons API bukan array:", data);
+          setProducts([]); // Atur ke array kosong jika respons bukan array
+        }
+      } catch (error) {
+        console.error("Gagal memuat data barang:", error);
+        setProducts([]); // Atur ke array kosong saat terjadi error
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    const matchesCategory =
-      selectedCategory === "Semua" || product.category === selectedCategory;
+    fetchProducts();
+  }, []);
 
-    return matchesSearchQuery && matchesCategory;
-  });
+  // Filter data berdasarkan pencarian dan kategori
+  const filteredProducts = Array.isArray(products)
+    ? products.filter((barang) => {
+        const matchesSearchQuery = barang.nama
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+
+        const matchesCategory =
+          selectedCategory === "Semua" ||
+          barang.nama_kategori === selectedCategory;
+
+        return matchesSearchQuery && matchesCategory;
+      })
+    : []; // Jika products bukan array, default ke array kosong
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
@@ -78,13 +65,16 @@ export default function HalamanUser() {
     currentPage * itemsPerPage
   );
 
+  // Placeholder untuk fungsionalitas keranjang (Anda perlu mengimplementasikan logika keranjang yang sebenarnya)
   const addToCart = () => {
-    setCartCount(cartCount + 1);
+    setCartCount(cartCount + 1); // Ini hanya penambahan sederhana, bukan keranjang yang sebenarnya
+    console.log("Barang ditambahkan ke keranjang (placeholder)");
+    // Anda biasanya akan menambahkan item ke state keranjang atau mengirimnya ke API di sini
   };
 
   return (
     <div className="min-h-screen bg-pink-200 text-black flex flex-col">
-      {/* Navbar Section */}
+      {/* Navbar */}
       <div className="bg-gray-100 py-4 px-6 flex justify-between items-center">
         <div>
           <img className="h-12" src="/images/logo.png" alt="Shelfify Logo" />
@@ -110,7 +100,6 @@ export default function HalamanUser() {
             ))}
           </select>
 
-          {/* Keranjang Icon */}
           <Link href="/keranjang">
             <div className="relative flex items-center text-black hover:text-pink-200 cursor-pointer">
               <FiShoppingCart size={32} />
@@ -124,35 +113,50 @@ export default function HalamanUser() {
         </div>
       </div>
 
-      {/* Produk Grid Section */}
-      <div className="flex-grow">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-6 py-6 text-black">
-          {paginatedProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              {...product}
-              onAddToCart={addToCart}
-            />
-          ))}
-        </div>
+      {/* Konten Produk */}
+      <div className="flex-grow px-6 py-6">
+        {loading ? (
+          <div className="text-center text-gray-700">Memuat produk...</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {paginatedProducts.map((barang) => (
+              <ProductCard
+                key={barang.id}
+                id={barang.id}
+                name={barang.nama}
+                price={`Rp ${Number(barang.harga).toLocaleString()}`}
+                image={`/${barang.image}`}
+                category={barang.nama_kategori}
+                onAddToCart={addToCart}
+              >
+                <AddFavoriteButton id_user={id_user} id_barang={barang.id} />
+              </ProductCard>
+            ))}
+            {paginatedProducts.length === 0 && (
+              <div className="text-center col-span-3 text-gray-500">
+                Tidak ada produk ditemukan.
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Pagination Section */}
+      {/* Pagination */}
       <div className="flex justify-center space-x-4 py-4 text-black">
         <button
-          className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-400"
-          onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
+          className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-400 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
         >
           Previous
         </button>
-        <span className="font-semibold">{`Page ${currentPage} of ${totalPages}`}</span>
+        <span className="font-semibold">{`Halaman ${currentPage} dari ${totalPages}`}</span>
         <button
-          className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-400"
+          className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-400 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={() =>
-            setCurrentPage(
-              currentPage < totalPages ? currentPage + 1 : totalPages
-            )
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
+          disabled={currentPage === totalPages || totalPages === 0}
         >
           Next
         </button>

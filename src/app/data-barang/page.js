@@ -1,7 +1,7 @@
-"use client";
+'use client'; // Tandai sebagai Client Component
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
+import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import {
   FaHome,
   FaBoxOpen,
@@ -10,59 +10,62 @@ import {
   FaUser,
   FaBars,
   FaClipboardList,
-} from "react-icons/fa";
-import { FiSearch } from "react-icons/fi";
-import Navbar from "@/components/sidebar";
+} from 'react-icons/fa';
+import { FiSearch } from 'react-icons/fi';
+import Navbar from '@/components/sidebar'; 
 
 const DataBarang = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  
+  const [barangData, setBarangData] = useState([]);
+ 
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const [loading, setLoading] = useState(true);
+ 
+  const [error, setError] = useState(null);
 
-  const dummyData = useMemo(
-    () =>
-      Array.from({ length: 20 }, (_, i) => ({
-        no: i + 1,
-        id: `ID${i + 1}`,
-        gambar: "product.png",
-        namaBarang: `Barang ${i + 1}`,
-        hargaBarang: (i + 1) * 10000,
-        stok: Math.floor(Math.random() * 100) + 1,
-        kategori: `Kategori ${Math.floor(Math.random() * 3) + 1}`,
-        jumlahBarang: Math.floor(Math.random() * 50) + 1,
-        tglBuat: "2023-01-01",
-        tglUbah: "2023-01-01",
-      })),
-    []
-  );
+  
+  useEffect(() => {
+    async function fetchBarang() {
+      try {
+        setLoading(true); 
+        const response = await fetch('/api/barang'); // Fetch dari API Route
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setBarangData(data); 
+      } catch (error) {
+        console.error('Error fetching barang in client:', error);
+        setError(error.message); 
+      } finally {
+        setLoading(false); 
+      }
+    }
 
+    fetchBarang();
+  }, []); 
+
+  
   const filteredData = useMemo(() => {
     if (!searchQuery) {
-      return dummyData;
+      return barangData; 
     }
-    return dummyData.filter((item) =>
+    
+    return barangData.filter((item) =>
       Object.values(item).some((value) =>
+        
         String(value).toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
-  }, [dummyData, searchQuery]);
+  }, [barangData, searchQuery]);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
+  
   return (
     <div className="flex min-h-screen font-sans">
-      <Navbar />
+      <Navbar /> {/* Pastikan komponen Navbar ada dan diimport */}
 
       <main className="flex-1 bg-[#fefbff] p-6">
         {/* Header and Controls */}
@@ -87,144 +90,118 @@ const DataBarang = () => {
               </button>
             </div>
 
-            <Link href="/input-barang">
+            <Link href="/input-barang"> {/* Pastikan path ini benar */}
               <button className="flex items-center bg-pink-300 hover:bg-pink-200 text-white px-3 py-2 rounded-md">
                 <FaPlusSquare className="mr-2" />
                 Tambah Barang
               </button>
             </Link>
             <div className="ml-2">
+              {/* Pastikan FaUser diimport jika digunakan */}
               <FaUser className="text-2xl text-black" />
             </div>
           </div>
         </div>
 
-        {/* Tabel */}
-        <div className="overflow-x-auto shadow-md rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-pink-300">
-              <tr>
-                {[
-                  "No",
-                  "Kode",
-                  "Gambar",
-                  "Nama barang",
-                  "Harga barang",
-                  "Stok",
-                  "Kategori",
-                  // "Jumlah barang",
-                  "Tgl buat",
-                  "Tgl ubah",
-                ].map((header, i) => (
-                  <th
-                    key={i}
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <tr key={item.id} className="hover:bg-gray-100">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {indexOfFirstItem + index + 1}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <img
-                        src={item.gambar}
-                        alt="Product"
-                        className="h-8 w-8 object-cover rounded-full"
-                      />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.namaBarang}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      Rp {item.hargaBarang.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.stok}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.kategori}
-                    </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.jumlahBarang}
-                    </td> */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.tglBuat}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.tglUbah}
+        {/* Loading dan Error State */}
+        {loading && (
+          <div className="text-center text-gray-600">Memuat data...</div>
+        )}
+        {error && (
+          <div className="text-center text-red-600">Error: {error}</div>
+        )}
+
+      
+        {!loading && !error && (
+          <div className="overflow-x-auto shadow-md rounded-lg">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-pink-300">
+                <tr>
+                  {[
+                    "No",
+                    "Kode",
+                    "Gambar",
+                    "Nama barang",
+                    "Harga barang",
+                    "Stok",
+                    "Kategori",
+                    "Tgl buat",
+                    "Tgl ubah",
+                  ].map((header, i) => (
+                    <th
+                      key={i}
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+               
+                {filteredData.length > 0 ? (
+                  filteredData.map((item, index) => (
+                    <tr key={item.id} className="hover:bg-gray-100">
+                      {/* Nomor urut berdasarkan index dari data yang difilter */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {index + 1}
+                      </td>
+                      {/* Sesuaikan dengan nama kolom dari database */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.kode}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.image ? (
+                           <img
+                            src={`/${item.image}`} // Asumsikan gambar ada di folder public
+                            alt={item.nama}
+                            className="h-8 w-8 object-cover rounded-full" // Sesuaikan styling
+                          />
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {item.nama}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        Rp {item.harga.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.stok}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {item.nama_kategori}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                         {item.tgl_buat ? new Date(item.tgl_buat).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                         {item.tgl_ubah ? new Date(item.tgl_ubah).toLocaleDateString() : '-'}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                 
+                    <td
+                      colSpan={9}
+                      className="px-6 py-4 text-center text-gray-500"
+                    >
+                      Tidak ada data barang ditemukan.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={10}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    No data available.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        <div className="mt-6 flex justify-end">
-          <nav
-            className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-            aria-label="Pagination"
-          >
-            <button
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            {pageNumbers.map((number) => (
-              <button
-                key={number}
-                onClick={() => paginate(number)}
-                className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                  currentPage === number
-                    ? "z-10 bg-pink-50 border-pink-500 text-pink-600"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                {number}
-              </button>
-            ))}
-            <button
-              onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </nav>
-        </div>
+        {/* Area pagination dihapus */}
       </main>
     </div>
   );
 };
-
-// Sidebar Item Component (Keep this as is)
-const MenuItem = ({ icon, label, collapsed }) => (
-  <div className="flex items-center space-x-4 text-white hover:text-pink-200 cursor-pointer">
-    <span className="text-lg">{icon}</span>
-    {!collapsed && <span>{label}</span>}
-  </div>
-);
 
 export default DataBarang;

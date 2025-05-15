@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
@@ -12,15 +13,7 @@ export default function LoginForm() {
   const handleLoginClick = (event) => {
     event.preventDefault();
 
-    if (email === "admin@shelfify.com" && password === "admin123") {
-      alert("Welcome Admin!");
-      router.push("/halamanutama-admin");
-    } else if (email === "user@shelfify.com" && password === "user123") {
-      alert("Welcome to Shelfify!");
-      router.push("/halaman-utama-user");
-    } else {
-      alert("Email atau password salah!");
-    }
+    
   };
 
   return (

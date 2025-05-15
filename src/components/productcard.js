@@ -1,42 +1,23 @@
-"use client";
-import { FaShoppingCart } from "react-icons/fa";
-import { FiHeart } from "react-icons/fi";
+import AddFavoriteButton from "./AddFavoriteButton";
 
-export default function ProductCard({ name, price, image }) {
-  const handleAddToCart = () => {
-    alert(`Produk "${name}" telah ditambahkan ke keranjang.`);
-  };
-
-  const handleAddToFavorites = () => {
-    alert(`Produk "${name}" telah ditambahkan ke favorit.`);
-  };
-
+export default function ProductCard({ id, name, price, image, category, onAddToCart, id_user }) {
   return (
-    <div className="bg-white rounded-xl overflow-hidden p-4 flex flex-col items-center shadow-md">
-      <img
-        src={image}
-        alt={name}
-        className="w-full h-48 object-cover rounded-md"
-      />
-      <h2 className="text-lg font-semibold mt-4 text-center">{name}</h2>
-      <p className="text-pink-600 font-bold mt-2">{price}</p>
+    <div className="bg-white rounded-lg shadow-lg p-4">
+      <img src={image} alt={name} className="w-full h-40 object-cover rounded" />
+      <h2 className="mt-2 font-semibold">{name}</h2>
+      <p className="text-sm text-gray-600">{category}</p>
+      <p className="text-pink-600 font-bold">{price}</p>
 
-      {/* Tombol dalam satu baris */}
-      <div className="mt-4 flex space-x-4">
+      <div className="mt-4 flex justify-between items-center">
         <button
-          onClick={handleAddToCart}
-          className="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-full transition text-xl"
-          title="Tambah ke Keranjang"
+          onClick={onAddToCart}
+          className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-400"
         >
-          <FaShoppingCart />
+          Tambah ke Keranjang
         </button>
-        <button
-          onClick={handleAddToFavorites}
-          className="bg-white p-3 rounded-full shadow-md hover:bg-pink-100 transition text-xl text-pink-500"
-          title="Tambah ke Favorit"
-        >
-          <FiHeart />
-        </button>
+
+      
+        <AddFavoriteButton id_user={id_user} id_barang={id} />
       </div>
     </div>
   );
